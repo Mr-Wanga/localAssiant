@@ -1,0 +1,20 @@
+services:
+  weaviate:
+    networks:
+      - localAssiant
+    restart: unless-stopped
+
+  mcp-excel:
+    networks:
+      - localAssiant
+    restart: unless-stopped
+
+volumes:
+  localAssiant_weaviate:
+    external: true
+  localAssiant_share_data:
+    external: true
+
+networks:
+  localAssiant:
+    external: true
