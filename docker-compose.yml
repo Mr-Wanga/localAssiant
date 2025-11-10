@@ -1,0 +1,38 @@
+services:
+  weaviate:
+    command:
+    - --host
+    - 0.0.0.0
+    - --port
+    - '8080'
+    - --scheme
+    - http
+    image: semitechnologies/weaviate:1.34.0
+    container_name: localAssiant_weaviate
+    ports:
+    - 8080:8080
+    - 50051:50051
+    volumes:
+    - localAssiant_weaviate:/var/lib/weaviate
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      ENABLE_MODULES: 'text2vec-ollama,generative-ollama'
+      CLUSTER_HOSTNAME: 'node1'
+
+  mcp-excel:
+    build:
+      context: ./mcps/excel-mcp-server
+      dockerfile: Dockerfile
+      additional_contexts:
+        common: ./common
+    image: mcp-excel:${VERSION:-latest}
+    container_name: localAssiant_mcp_excel
+    volumes:
+      - localAssiant_share_data:/app/data
+    ports:
+      - 9000:9000
+    environment:
+      - FASTMCP_PORT=9000
+      - EXCEL_FILES_PATH=/app/data/uploadFiles
